@@ -63,9 +63,21 @@ if img_file_buffer is not None:
     prediction = model.predict(data)
     print(prediction)
     if prediction[0][0]>0.5:
-      st.header('Izquierda, con Probabilidad: '+str( prediction[0][0]) )
+      st.header('enciende luz, con Probabilidad: '+str( prediction[0][0]) )
+      act1="ON"
+      client1= paho.Client("grego")                           
+      client1.on_publish = on_publish                          
+      client1.connect(broker,port)  
+      message =json.dumps({"Act1":act1})
+      ret= client1.publish("gregoriomensaje", message)
     if prediction[0][1]>0.5:
-      st.header('Arriba, con Probabilidad: '+str( prediction[0][1]))
+      st.header('Apaga luz, con Probabilidad: '+str( prediction[0][1]))
+      act1="OFF"
+      client1= paho.Client("grego")                           
+      client1.on_publish = on_publish                          
+      client1.connect(broker,port)  
+      message =json.dumps({"Act1":act1})
+      ret= client1.publish("gregoriomensaje", message)
     #if prediction[0][2]>0.5:
     # st.header('Derecha, con Probabilidad: '+str( prediction[0][2]))
 
