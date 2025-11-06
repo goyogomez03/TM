@@ -20,20 +20,14 @@ def on_message(client, userdata, message):
     message_received=str(message.payload.decode("utf-8"))
     st.write(message_received)
 
+        
+
+
 broker="broker.mqttdashboard.com"
 port=1883
 client1= paho.Client("grego")
 client1.on_message = on_message
 
-# Fondo blanco
-page_bg_img = """
-<style>
-[data-testid="stAppViewContainer"] {
-    background-color: white;
-}
-</style>
-"""
-st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # Muestra la versión de Python junto con detalles adicionales
 st.write("Versión de Python:", platform.python_version())
@@ -42,12 +36,11 @@ model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 st.title("Reconocimiento de Imágenes😁")
-image = Image.open('casa.jpeg')  # Imagen actualizada
+#st.write("Versión de Python:", platform.python_version())
+image = Image.open('OIG5.jpg')
 st.image(image, width=350)
-
 with st.sidebar:
     st.subheader("Usando un modelo entrenado en teachable Machine puedes Usarlo en esta app para identificar")
-
 img_file_buffer = st.camera_input("Toma una Foto")
 
 if img_file_buffer is not None:
@@ -87,5 +80,3 @@ if img_file_buffer is not None:
       ret= client1.publish("gregoriomensaje", message)
     #if prediction[0][2]>0.5:
     # st.header('Derecha, con Probabilidad: '+str( prediction[0][2]))
-
-
