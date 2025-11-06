@@ -8,22 +8,22 @@ import time
 import json
 import platform
 
-def on_publish(client,userdata,result):             #create function for callback
+def on_publish(client,userdata,result):             
     print("el dato ha sido publicado \n")
     pass
 
 def on_message(client, userdata, message):
     global message_received
     time.sleep(2)
-    message_received=str(message.payload.decode("utf-8"))
+    message_received = str(message.payload.decode("utf-8"))
     st.write(message_received)
 
-broker="broker.mqttdashboard.com"
-port=1883
-client1= paho.Client("grego")
+broker = "broker.mqttdashboard.com"
+port = 1883
+client1 = paho.Client("grego")
 client1.on_message = on_message
 
-# Establece el fondo blanco
+# Fondo blanco
 page_bg_img = """
 <style>
 [data-testid="stAppViewContainer"] {
@@ -33,14 +33,14 @@ page_bg_img = """
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# Muestra la versión de Python junto con detalles adicionales
+# Muestra la versión de Python
 st.write("Versión de Python:", platform.python_version())
 
 model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 st.title("Reconocimiento de Imágenes😁")
-image = Image.open('casa.jpeg')  # Imagen actualizada
+image = Image.open('casa.jpg')  # Imagen actualizada
 st.image(image, width=350)
 
 with st.sidebar:
@@ -61,20 +61,19 @@ if img_file_buffer is not None:
 
     prediction = model.predict(data)
     print(prediction)
-    if prediction[0][0]>0.5:
-        st.header('enciende luz, con Probabilidad: '+str(prediction[0][0]))
-        act1="ON"
+    if prediction[0][0] > 0.5:
+        st.header('enciende luz, con Probabilidad: ' + str(prediction[0][0]))
+        act1 = "ON"
         client1 = paho.Client("grego")
         client1.on_publish = on_publish
         client1.connect(broker, port)
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
-    if prediction[0][1]>0.5:
-        st.header('Apaga luz, con Probabilidad: '+str(prediction[0][1]))
-        act1="OFF"
+    if prediction[0][1] > 0.5:
+        st.header('Apaga luz, con Probabilidad: ' + str(prediction[0][1]))
+        act1 = "OFF"
         client1 = paho.Client("grego")
         client1.on_publish = on_publish
         client1.connect(broker, port)
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
-
