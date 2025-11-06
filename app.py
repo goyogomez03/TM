@@ -4,8 +4,30 @@ import numpy as np
 #from PIL import Image
 from PIL import Image as Image, ImageOps as ImagOps
 from keras.models import load_model
+import paho.mqtt.client as paho
+import time
+import json
+import platform
 
 import platform
+def on_publish(client,userdata,result):             #create function for callback
+    print("el dato ha sido publicado \n")
+    pass
+
+def on_message(client, userdata, message):
+    global message_received
+    time.sleep(2)
+    message_received=str(message.payload.decode("utf-8"))
+    st.write(message_received)
+
+        
+
+
+broker="broker.mqttdashboard.com"
+port=1883
+client1= paho.Client("grego")
+client1.on_message = on_message
+
 
 # Muestra la versión de Python junto con detalles adicionales
 st.write("Versión de Python:", platform.python_version())
