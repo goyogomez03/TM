@@ -40,7 +40,7 @@ model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 st.title("Reconocimiento de Imágenes😁")
-image = Image.open('casa.jpg')  # Imagen actualizada
+image = Image.open('casa.jpeg')  # Imagen actualizada
 st.image(image, width=350)
 
 with st.sidebar:
