@@ -52,7 +52,7 @@ st.title("Reconocimiento de Imágenes😁")
 
 # Imagen de referencia OIG5
 try:
-    image = Image.open('OIG5.jpg')
+    image = Image.open('imagen robot.jpeg')
     st.image(image, width=350)
 except FileNotFoundError:
     st.warning("La imagen 'OIG5.jpg' no se encontró. Verifica que esté en la carpeta correcta.")
