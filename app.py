@@ -7,6 +7,7 @@ import paho.mqtt.client as paho
 import time
 import json
 import platform
+import os
 
 # Estilos CSS personalizados
 st.markdown("""
@@ -19,12 +20,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Imagen inicial decorativa
+# Imagen inicial decorativa actualizada
 try:
-    image_inicio = Image.open('foto_manorobot.jpg')
+    image_inicio = Image.open('imagen robot.jpg')
     st.image(image_inicio, width=400)
 except FileNotFoundError:
-    st.warning("La imagen 'foto_manorobot.jpg' no se encontró. Verifica que esté en la carpeta correcta.")
+    st.warning("La imagen 'imagen robot.jpg' no se encontró. Verifica que esté en la carpeta correcta.")
 
 def on_publish(client, userdata, result):             
     print("el dato ha sido publicado \n")
@@ -49,7 +50,7 @@ data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 st.title("Reconocimiento de Imágenes😁")
 
-# Imagen de referencia
+# Imagen de referencia OIG5
 try:
     image = Image.open('OIG5.jpg')
     st.image(image, width=350)
