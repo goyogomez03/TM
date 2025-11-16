@@ -20,22 +20,25 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Imagen inicial decorativa
-image_inicio = Image.open('foto_manorobot.jpg')
-st.image(image_inicio, width=400)
+try:
+    image_inicio = Image.open('foto_manorobot.jpg')
+    st.image(image_inicio, width=400)
+except FileNotFoundError:
+    st.warning("La imagen 'foto_manorobot.jpg' no se encontró. Verifica que esté en la carpeta correcta.")
 
-def on_publish(client,userdata,result):             
+def on_publish(client, userdata, result):             
     print("el dato ha sido publicado \n")
     pass
 
 def on_message(client, userdata, message):
     global message_received
     time.sleep(2)
-    message_received=str(message.payload.decode("utf-8"))
+    message_received = str(message.payload.decode("utf-8"))
     st.write(message_received)
 
-broker="broker.mqttdashboard.com"
-port=1883
-client1= paho.Client("grego")
+broker = "broker.mqttdashboard.com"
+port = 1883
+client1 = paho.Client("grego")
 client1.on_message = on_message
 
 # Muestra la versión de Python junto con detalles adicionales
@@ -45,11 +48,16 @@ model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 st.title("Reconocimiento de Imágenes😁")
-image = Image.open('foto_manorobot.jpg')
-st.image(image, width=350)
+
+# Imagen de referencia
+try:
+    image = Image.open('OIG5.jpg')
+    st.image(image, width=350)
+except FileNotFoundError:
+    st.warning("La imagen 'OIG5.jpg' no se encontró. Verifica que esté en la carpeta correcta.")
 
 with st.sidebar:
-    st.subheader("Usando un modelo entrenado en teachable Machine puedes Usarlo en esta app para identificar")
+    st.subheader("Usando un modelo entrenado en Teachable Machine puedes usarlo en esta app para identificar")
 
 img_file_buffer = st.camera_input("Toma una Foto")
 
@@ -68,7 +76,7 @@ if img_file_buffer is not None:
     print(prediction)
 
     if prediction[0][0] > 0.5:
-        st.header('enciende luz, con Probabilidad: ' + str(prediction[0][0]))
+        st.header('Enciende luz, con Probabilidad: ' + str(prediction[0][0]))
         act1 = "ON"
         client1 = paho.Client("grego")                           
         client1.on_publish = on_publish                          
