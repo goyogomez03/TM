@@ -1,6 +1,7 @@
 import streamlit as st
 import cv2
 import numpy as np
+#from PIL import Image
 from PIL import Image as Image, ImageOps as ImagOps
 from keras.models import load_model
 import paho.mqtt.client as paho
@@ -8,102 +9,85 @@ import time
 import json
 import platform
 
-def on_publish(client,userdata,result):
+# 🔧 Cambios visuales: tipografía negra en toda la app
+st.markdown(
+    """
+    <style>
+    /* Cambia toda la tipografía a color negro */
+    html, body, [class*="css"]  {
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+def on_publish(client,userdata,result):             #create function for callback
     print("el dato ha sido publicado \n")
     pass
 
 def on_message(client, userdata, message):
     global message_received
     time.sleep(2)
-    message_received = str(message.payload.decode("utf-8"))
+    message_received=str(message.payload.decode("utf-8"))
     st.write(message_received)
 
-broker = "broker.mqttdashboard.com"
-port = 1883
-client1 = paho.Client("grego")
+broker="broker.mqttdashboard.com"
+port=1883
+client1= paho.Client("grego")
 client1.on_message = on_message
 
-# Estilo personalizado: fondo blanco y texto negro
-page_style = """
-<style>
-/* Fondo blanco para toda la app */
-[data-testid="stAppViewContainer"] {
-    background-color: white !important;
-    color: black !important;
-}
-
-/* Sidebar blanco */
-[data-testid="stSidebar"] {
-    background-color: white !important;
-    color: black !important;
-}
-
-/* Forzar texto negro en todos los elementos */
-* {
-    color: black !important;
-    font-family: 'Arial', sans-serif !important;
-}
-
-/* Encabezados */
-h1, h2, h3, h4, h5, h6 {
-    color: black !important;
-}
-
-/* Elementos de texto */
-p, span, div, label {
-    color: black !important;
-}
-</style>
-"""
-st.markdown(page_style, unsafe_allow_html=True)
-
-# Muestra la versión de Python
+# Muestra la versión de Python junto con detalles adicionales
 st.write("Versión de Python:", platform.python_version())
 
 model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
-# Título
-st.markdown("<h1 style='color:black;'>Reconocimiento de Imágenes 😁</h1>", unsafe_allow_html=True)
-
-image = Image.open('foto_manorobot.jpg')
+st.title("Reconocimiento de Imágenes😁")
+image = Image.open('OIG5.jpg')
 st.image(image, width=350)
 
 with st.sidebar:
-    st.subheader("Usando un modelo entrenado en Teachable Machine puedes usarlo en esta app para identificar")
+    st.subheader("Usando un modelo entrenado en teachable Machine puedes Usarlo en esta app para identificar")
 
 img_file_buffer = st.camera_input("Toma una Foto")
 
 if img_file_buffer is not None:
+    # To read image file buffer with OpenCV:
     data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+    # To read image file buffer as a PIL Image:
     img = Image.open(img_file_buffer)
 
     newsize = (224, 224)
     img = img.resize(newsize)
+    # To convert PIL Image to numpy array:
     img_array = np.array(img)
 
+    # Normalize the image
     normalized_image_array = (img_array.astype(np.float32) / 127.0) - 1
+    # Load the image into the array
     data[0] = normalized_image_array
 
+    # run the inference
     prediction = model.predict(data)
     print(prediction)
-
     if prediction[0][0] > 0.5:
         st.header('enciende luz, con Probabilidad: ' + str(prediction[0][0]))
         act1 = "ON"
-        client1 = paho.Client("grego")
-        client1.on_publish = on_publish
-        client1.connect(broker, port)
+        client1 = paho.Client("grego")                           
+        client1.on_publish = on_publish                          
+        client1.connect(broker, port)  
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
-
     if prediction[0][1] > 0.5:
         st.header('Apaga luz, con Probabilidad: ' + str(prediction[0][1]))
         act1 = "OFF"
-        client1 = paho.Client("grego")
-        client1.on_publish = on_publish
-        client1.connect(broker, port)
+        client1 = paho.Client("grego")                           
+        client1.on_publish = on_publish                          
+        client1.connect(broker, port)  
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
+    #if prediction[0][2] > 0.5:
+    #    st.header('Derecha, con Probabilidad: ' + str(prediction[0][2]))
 
 
