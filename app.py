@@ -23,15 +23,21 @@ port=1883
 client1= paho.Client("grego")
 client1.on_message = on_message
 
-# Establece el fondo blanco
-page_bg_img = """
+# Establece el fondo blanco y tipografía negra
+page_style = """
 <style>
 [data-testid="stAppViewContainer"] {
     background-color: white;
+    color: black;
+    font-family: 'Arial', sans-serif;
+}
+h1, h2, h3, h4, h5, h6, p, div, span {
+    color: black !important;
+    font-family: 'Arial', sans-serif !important;
 }
 </style>
 """
-st.markdown(page_bg_img, unsafe_allow_html=True)
+st.markdown(page_style, unsafe_allow_html=True)
 
 # Muestra la versión de Python junto con detalles adicionales
 st.write("Versión de Python:", platform.python_version())
@@ -77,4 +83,5 @@ if img_file_buffer is not None:
         client1.connect(broker, port)
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
+
 
