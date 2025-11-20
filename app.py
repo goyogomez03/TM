@@ -26,14 +26,32 @@ client1.on_message = on_message
 # Estilo personalizado: fondo blanco y texto negro
 page_style = """
 <style>
+/* Fondo blanco para toda la app */
 [data-testid="stAppViewContainer"] {
-    background-color: white;
-    color: black;
-    font-family: 'Arial', sans-serif;
+    background-color: white !important;
+    color: black !important;
 }
-h1, h2, h3, h4, h5, h6, p, div, span {
+
+/* Sidebar blanco */
+[data-testid="stSidebar"] {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Forzar texto negro en todos los elementos */
+* {
     color: black !important;
     font-family: 'Arial', sans-serif !important;
+}
+
+/* Encabezados */
+h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+}
+
+/* Elementos de texto */
+p, span, div, label {
+    color: black !important;
 }
 </style>
 """
@@ -45,14 +63,14 @@ st.write("Versión de Python:", platform.python_version())
 model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
-# Título en negro
+# Título
 st.markdown("<h1 style='color:black;'>Reconocimiento de Imágenes 😁</h1>", unsafe_allow_html=True)
 
 image = Image.open('foto_manorobot.jpg')
 st.image(image, width=350)
 
 with st.sidebar:
-    st.subheader("Usando un modelo entrenado en teachable Machine puedes Usarlo en esta app para identificar")
+    st.subheader("Usando un modelo entrenado en Teachable Machine puedes usarlo en esta app para identificar")
 
 img_file_buffer = st.camera_input("Toma una Foto")
 
@@ -69,6 +87,7 @@ if img_file_buffer is not None:
 
     prediction = model.predict(data)
     print(prediction)
+
     if prediction[0][0] > 0.5:
         st.header('enciende luz, con Probabilidad: ' + str(prediction[0][0]))
         act1 = "ON"
@@ -77,6 +96,7 @@ if img_file_buffer is not None:
         client1.connect(broker, port)
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
+
     if prediction[0][1] > 0.5:
         st.header('Apaga luz, con Probabilidad: ' + str(prediction[0][1]))
         act1 = "OFF"
@@ -85,6 +105,5 @@ if img_file_buffer is not None:
         client1.connect(broker, port)
         message = json.dumps({"Act1": act1})
         ret = client1.publish("gregoriomensaje", message)
-
 
 
